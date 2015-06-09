@@ -12,23 +12,24 @@ import java.util.List;
  */
 public class UrlTagMiner implements TagMiner {
 
-    public TaggedSentence mine(String sentence) {
+    public TaggedSentence mine(TaggedSentence taggedSentence) {
 
-        TaggedSentence taggedSentence = new TaggedSentence();
-
+        String sentence = taggedSentence.getTaggedSentence();
         String[] words = SentenceUtil.getWords(sentence);
-        int count = 1;
         for (String w : words) {
-            w = w.trim();
+            w = w.trim().replaceAll("\\[", "").replaceAll("\\]", "");;
             if (TLD.INSTANCE.isUrl(w)) {
-                String TAG = "#URL"+count;
+                String TAG = "#URL";
 
                 sentence = sentence.replaceFirst(w, TAG);
 
                 taggedSentence.setTaggedSentence(sentence);
-                taggedSentence.getValueMap().put(TAG, w);
 
-                count++;
+                List<String> values = taggedSentence.getTagValuesMap().get(TAG);
+                if(values == null)
+                    values = new ArrayList<String>();
+                values.add(w);
+                taggedSentence.getTagValuesMap().put(TAG, values);
             }
         }
 

@@ -9,5 +9,5 @@ import java.util.List;
  */
 public interface TagMiner {
 
-    TaggedSentence mine(String sentence);
+    TaggedSentence mine(TaggedSentence sentence);
 }

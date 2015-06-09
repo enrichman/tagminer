@@ -1,6 +1,7 @@
 package it.enricocandino.model;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -8,11 +9,20 @@ import java.util.Map;
  */
 public class TaggedSentence {
 
+    private String originalSentence;
     private String taggedSentence;
-    private Map<String, String> valueMap;
+    private Map<String, List<String>> tagValuesMap;
 
     public TaggedSentence() {
-        valueMap = new HashMap<String, String>();
+        tagValuesMap = new HashMap<String, List<String>>();
+    }
+
+    public String getOriginalSentence() {
+        return originalSentence;
+    }
+
+    public void setOriginalSentence(String originalSentence) {
+        this.originalSentence = originalSentence;
     }
 
     public String getTaggedSentence() {
@@ -23,11 +33,11 @@ public class TaggedSentence {
         this.taggedSentence = taggedSentence;
     }
 
-    public Map<String, String> getValueMap() {
-        return valueMap;
+    public Map<String, List<String>> getTagValuesMap() {
+        return tagValuesMap;
     }
 
-    public void setValueMap(Map<String, String> valueMap) {
-        this.valueMap = valueMap;
+    public void setTagValuesMap(Map<String, List<String>> tagValuesMap) {
+        this.tagValuesMap = tagValuesMap;
     }
 }
