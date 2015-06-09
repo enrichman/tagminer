@@ -40,4 +40,13 @@ public class TaggedSentence {
     public void setTagValuesMap(Map<String, List<String>> tagValuesMap) {
         this.tagValuesMap = tagValuesMap;
     }
+
+    @Override
+    public String toString() {
+        return "TaggedSentence{" +
+                "originalSentence='" + originalSentence + '\'' +
+                ", taggedSentence='" + taggedSentence + '\'' +
+                ", tagValuesMap=" + tagValuesMap +
+                '}';
+    }
 }

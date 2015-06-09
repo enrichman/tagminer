@@ -18,6 +18,16 @@ public class SentenceFilter {
         filters.add(filter);
     }
 
+    public List<String> doFilter(List<String> sentences) {
+        List<String> cleanedSentences = new ArrayList<String>();
+        for(String sentence : sentences) {
+            String cleaned = doFilter(sentence);
+            if(cleaned != null)
+                cleanedSentences.add(cleaned);
+        }
+        return cleanedSentences;
+    }
+
     public String doFilter(String sentence) {
         String result = sentence;
         if(filters != null) {

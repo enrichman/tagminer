@@ -2,8 +2,13 @@ package it.enricocandino;
 
 import it.enricocandino.model.Page;
 import it.enricocandino.extractor.reader.ClueWebReader;
+import it.enricocandino.model.TaggedSentence;
 import it.enricocandino.tagminer.Miner;
+import it.enricocandino.text.DefaultSentenceFilter;
+import it.enricocandino.text.SentenceSplitter;
 import it.enricocandino.util.TLD;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,12 +23,6 @@ public class Extractor {
     private static final String BASE_FOLDER = "/Users/enrico/Documents/UNI-MAGISTRALE/Analisi e Gestione dell'informazione su Web/warc/";
 
     public static void main(String[] args) {
-
-        ExecutorService executor = Executors.newFixedThreadPool(8);
-
-        long startBatch = System.currentTimeMillis();
-        long start = System.currentTimeMillis();
-
         try {
 
             ClueWebReader reader = new ClueWebReader();
@@ -32,45 +31,34 @@ public class Extractor {
 
                 String path = BASE_FOLDER + "0" + i + ".warc.gz";
 
-                System.out.println("Start reading from: "+path);
+                // Read the warc file
                 List<Page> pages = reader.read(path);
 
-
-                start = System.currentTimeMillis();
-                System.out.println("Start mining");
-
-                Miner miner = new Miner();
                 for(Page p : pages) {
-                    miner.mine(p);
+
+                    // parse the page content in the body
+                    Document doc = Jsoup.parse(p.getHtml());
+                    String bodyText = doc.select("body").text();
+
+                    // Split the text in sentences
+                    List<String> sentences = SentenceSplitter.split(bodyText);
+
+                    // Remove the "noisy" sentences
+                    DefaultSentenceFilter filter = new DefaultSentenceFilter();
+                    List<String> cleanedSentences = filter.doFilter(sentences);
+
+                    // mine the sentences!
+                    Miner miner = new Miner();
+                    List<TaggedSentence> taggedSentences = miner.mine(cleanedSentences);
+
+                    System.out.println(taggedSentences);
                 }
 
             }
 
-            executor.shutdown();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        while (!executor.isTerminated()) {}
-
-        System.out.println("Finish indexing in " + (System.currentTimeMillis() - start));
-        System.out.println("Finish batch in " + (System.currentTimeMillis() - startBatch));
-
-        System.out.println("** Completed! **");
-
-    }
-
-    // chops a list into non-view sublists of length L
-    static <T> List<List<T>> chopped(List<T> list, final int L) {
-        List<List<T>> parts = new ArrayList<List<T>>();
-        final int N = list.size();
-        for (int i = 0; i < N; i += L) {
-            parts.add(new ArrayList<T>(
-                            list.subList(i, Math.min(N, i + L)))
-            );
-        }
-        return parts;
     }
 
 }

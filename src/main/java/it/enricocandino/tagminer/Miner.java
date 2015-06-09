@@ -16,43 +16,31 @@ import java.util.List;
  */
 public class Miner {
 
-    public List<TaggedSentence> mine(Page page) {
-        List<TaggedSentence> taggedSentenceList = new ArrayList<TaggedSentence>();
+    private List<TagMiner> miners;
 
-        Document doc = Jsoup.parse(page.getHtml());
-        String bodyText = doc.select("body").text();
+    public Miner() {
+        this.miners = new ArrayList<TagMiner>();
+        this.miners.add(new UrlTagMiner());
+    }
 
-        List<String> sentences = SentenceSplitter.split(bodyText);
-
-        List<String> cleanedSentences = new ArrayList<String>();
-
-        DefaultSentenceFilter filter = new DefaultSentenceFilter();
+    public List<TaggedSentence> mine(List<String> sentences) {
+        List<TaggedSentence> taggedSentences = new ArrayList<TaggedSentence>();
         for(String sentence : sentences) {
-            String cleaned = filter.doFilter(sentence);
-            if(cleaned != null)
-                cleanedSentences.add(cleaned);
+            taggedSentences.add(mine(sentence));
+        }
+        return taggedSentences;
+    }
+
+    public TaggedSentence mine(String sentence) {
+        TaggedSentence taggedSentence = new TaggedSentence();
+        taggedSentence.setOriginalSentence(sentence);
+        taggedSentence.setTaggedSentence(sentence);
+
+        for(TagMiner miner : miners) {
+            taggedSentence = miner.mine(taggedSentence);
         }
 
-        TagMiner miner = new UrlTagMiner();
-
-        for(String sentence : cleanedSentences) {
-            TaggedSentence taggedSentence = new TaggedSentence();
-            taggedSentence.setOriginalSentence(sentence);
-            taggedSentence.setTaggedSentence(sentence);
-
-            TaggedSentence taggedSentenceResult = miner.mine(taggedSentence);
-            if(taggedSentenceResult != null)
-                taggedSentenceList.add(taggedSentenceResult);
-        }
-
-        for(TaggedSentence ts : taggedSentenceList) {
-            if(!ts.getTagValuesMap().isEmpty()) {
-                System.out.println(ts.getTaggedSentence());
-                System.out.println(ts.getTagValuesMap());
-            }
-        }
-
-        return null;
+        return taggedSentence;
     }
 
 }
