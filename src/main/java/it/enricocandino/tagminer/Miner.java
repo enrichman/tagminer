@@ -22,6 +22,7 @@ public class Miner {
         this.miners = new ArrayList<TagMiner>();
         this.miners.add(new UrlTagMiner());
         this.miners.add(new OrdinalTagMiner());
+        this.miners.add(new TimeTagMiner());
     }
 
     public List<TaggedSentence> mine(List<String> sentences) {
