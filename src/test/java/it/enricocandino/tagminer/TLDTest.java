@@ -1,4 +1,6 @@
-import it.enricocandino.util.TLD;
+package it.enricocandino.tagminer;
+
+import it.enricocandino.tagminer.TLD;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

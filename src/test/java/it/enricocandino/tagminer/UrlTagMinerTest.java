@@ -1,5 +1,6 @@
+package it.enricocandino.tagminer;
+
 import it.enricocandino.model.TaggedSentence;
-import it.enricocandino.tagminer.Miner;
 import it.enricocandino.tagminer.UrlTagMiner;
 import org.junit.Test;
 

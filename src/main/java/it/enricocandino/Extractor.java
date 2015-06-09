@@ -6,14 +6,10 @@ import it.enricocandino.model.TaggedSentence;
 import it.enricocandino.tagminer.Miner;
 import it.enricocandino.text.DefaultSentenceFilter;
 import it.enricocandino.text.SentenceSplitter;
-import it.enricocandino.util.TLD;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * @author Enrico Candino

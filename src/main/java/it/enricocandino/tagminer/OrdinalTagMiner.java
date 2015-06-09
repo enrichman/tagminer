@@ -9,9 +9,10 @@ import java.util.List;
 /**
  * @author Enrico Candino
  */
-public class UrlTagMiner extends BaseTagMiner {
+public class OrdinalTagMiner extends BaseTagMiner {
 
-    private static final String TAG = "#URL";
+    private static final String TAG     = "#ORD";
+    private static final String REGEX   = "\\d+(st|nd|rd|th)";
 
     public TaggedSentence mine(TaggedSentence taggedSentence) {
 
@@ -23,7 +24,7 @@ public class UrlTagMiner extends BaseTagMiner {
             if(w.length() > 1 && !Character.isLetter(w.charAt(w.length()-1)))
                 w = w.substring(0, w.length()-1);
 
-            if (TLD.INSTANCE.isUrl(w)) {
+            if (w.matches(REGEX)) {
 
                 sentence = sentence.replaceFirst(w, TAG);
                 taggedSentence.setTaggedSentence(sentence);
