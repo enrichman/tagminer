@@ -14,23 +14,22 @@ import java.util.List;
 /**
  * @author Enrico Candino
  */
-public class Extractor {
+public class TagMinerMain {
 
     private static final String BASE_FOLDER = "/Users/enrico/Documents/UNI-MAGISTRALE/Analisi e Gestione dell'informazione su Web/warc/";
 
     public static void main(String[] args) {
-        try {
 
+        // Read the warc file
+        try {
             ClueWebReader reader = new ClueWebReader();
 
             for (int i = 0; i < 1; i++) {
-
                 String path = BASE_FOLDER + "0" + i + ".warc.gz";
-
-                // Read the warc file
                 List<Page> pages = reader.read(path);
 
-                for(Page p : pages) {
+                // process extracted pages
+                for (Page p : pages) {
 
                     // parse the page content in the body
                     Document doc = Jsoup.parse(p.getHtml());
@@ -38,10 +37,14 @@ public class Extractor {
 
                     // Split the text in sentences
                     List<String> sentences = SentenceSplitter.split(bodyText);
+                    if(sentences.isEmpty())
+                        continue;
 
                     // Remove the "noisy" sentences
                     DefaultSentenceFilter filter = new DefaultSentenceFilter();
                     List<String> cleanedSentences = filter.doFilter(sentences);
+                    if(cleanedSentences.isEmpty())
+                        continue;
 
                     // mine the sentences!
                     Miner miner = new Miner();
@@ -49,12 +52,12 @@ public class Extractor {
 
                     System.out.println(taggedSentences);
                 }
-
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
     }
 
 }
