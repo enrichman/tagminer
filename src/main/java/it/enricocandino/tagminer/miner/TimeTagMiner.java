@@ -14,11 +14,12 @@ public class TimeTagMiner extends BaseTagMiner {
 
     private static final String TAG = "#TIME";
 
-    private static final String REGEX_HHMM = "[0-2][0-9]:[0-5][0-9]";
+    private static final String REGEX_HHMMSS = "\\b(([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9])\\b";
+    private static final String REGEX_HHMM_AMPM = "\\b(([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9])(\\b|am|pm)\\b";
     private static final String REGEX_H_M_S = "[0-2][0-9]h\\s[0-5][0-9]m\\s[0-5][0-9]s";
     private static final String REGEX_M_S = "[0-5][0-9]m\\s[0-5][0-9]s";
 
-    private static final String REGEX = "("+REGEX_HHMM+"|"+REGEX_H_M_S+"|"+REGEX_M_S+")";
+    private static final String REGEX = "("+REGEX_HHMMSS+"|"+REGEX_HHMM_AMPM+"|"+REGEX_H_M_S+"|"+REGEX_M_S+")";
 
     public TaggedSentence mine(TaggedSentence taggedSentence) {
 

@@ -8,8 +8,9 @@ import it.enricocandino.tagminer.miner.*;
 public class DefaultMiner extends Miner {
 
     public DefaultMiner() {
-        addTagMiner(new UrlTagMiner());
         addTagMiner(new OrdinalTagMiner());
+        addTagMiner(new NumberTagMiner());
+        addTagMiner(new UrlTagMiner());
         addTagMiner(new TimeTagMiner());
         addTagMiner(new MonthTagMiner());
     }
