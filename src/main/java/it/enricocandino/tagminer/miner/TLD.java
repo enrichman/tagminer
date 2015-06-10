@@ -39,7 +39,7 @@ public enum TLD {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if(br != null)
+            if (br != null)
                 try {
                     br.close();
                 } catch (IOException e) {
@@ -50,18 +50,26 @@ public enum TLD {
 
     public boolean isUrl(String url) {
         url = url.toUpperCase();
-        for(String tld : tldList) {
-            if(url.contains("." + tld)) {
-                if (!url.toLowerCase().matches("^\\w+://.*")) {
-                    url = "http://" + url;
-                }
-                try {
-                    new URL(url);
-                } catch (MalformedURLException e) {
-                    return false;
-                }
 
-                return !url.contains("@");
+        if (!url.contains("..")) {
+            for (String tld : tldList) {
+
+                if (url.endsWith("." + tld)
+                        || url.contains("." + tld + "/")
+                        || url.contains("." + tld + "?")) {
+
+
+                    if (!url.toLowerCase().matches("^\\w+://.*") && !url.toLowerCase().contains("http")) {
+                        url = "http://" + url;
+                    }
+                    try {
+                        new URL(url);
+                    } catch (MalformedURLException e) {
+                        return false;
+                    }
+
+                    return !url.contains("@");
+                }
             }
         }
         return false;
@@ -69,8 +77,8 @@ public enum TLD {
 
     public boolean isEmail(String word) {
         word = word.toUpperCase();
-        for(String tld : tldList) {
-            if(word.endsWith("."+tld)) {
+        for (String tld : tldList) {
+            if (word.endsWith("." + tld)) {
                 return word.contains("@");
             }
         }

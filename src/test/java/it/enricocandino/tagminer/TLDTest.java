@@ -14,6 +14,9 @@ public class TLDTest {
         assertFalse(TLD.INSTANCE.isUrl("abc"));
         assertFalse(TLD.INSTANCE.isUrl("abc.djnksjkc"));
         assertFalse(TLD.INSTANCE.isUrl("abc@dsjk.com"));
+        assertFalse(TLD.INSTANCE.isUrl("d'or.merci"));
+        assertFalse(TLD.INSTANCE.isUrl("src=\"http://adcast.deviantart.com/delivery/avw.php?"));
+        assertFalse(TLD.INSTANCE.isUrl("s'ouvre...de"));
     }
 
     @Test

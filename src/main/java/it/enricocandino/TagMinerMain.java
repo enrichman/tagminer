@@ -7,9 +7,12 @@ import it.enricocandino.tagminer.DefaultMiner;
 import it.enricocandino.tagminer.Miner;
 import it.enricocandino.text.DefaultSentenceFilter;
 import it.enricocandino.text.SentenceSplitter;
+import it.enricocandino.text.csv.CsvWriter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,6 +24,13 @@ public class TagMinerMain {
 
     public static void main(String[] args) {
 
+        String[] files = new String[] { "out1", "out2", "out3" };
+        for(String filename : files) {
+            File file = new File(filename);
+            if (file.exists())
+                file.delete();
+        }
+
         // Read the warc file
         try {
             ClueWebReader reader = new ClueWebReader();
@@ -28,6 +38,8 @@ public class TagMinerMain {
             for (int i = 0; i < 1; i++) {
                 String path = BASE_FOLDER + "0" + i + ".warc.gz";
                 List<Page> pages = reader.read(path);
+
+                List<TaggedSentence> pageSentences = new ArrayList<TaggedSentence>();
 
                 // process extracted pages
                 for (Page p : pages) {
@@ -52,7 +64,11 @@ public class TagMinerMain {
                     List<TaggedSentence> taggedSentences = miner.mine(cleanedSentences);
 
                     System.out.println(taggedSentences);
+                    pageSentences.addAll(taggedSentences);
                 }
+
+                CsvWriter writer = new CsvWriter();
+                writer.write(pageSentences);
             }
         } catch (Exception e) {
             e.printStackTrace();
