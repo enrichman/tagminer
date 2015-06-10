@@ -10,6 +10,7 @@ public class DefaultMiner extends Miner {
     public DefaultMiner() {
         addTagMiner(new UrlTagMiner());
         addTagMiner(new PhoneTagMiner());
+        addTagMiner(new EmailTagMiner());
         addTagMiner(new OrdinalTagMiner());
         addTagMiner(new TimeTagMiner());
         addTagMiner(new DayTagMiner());
