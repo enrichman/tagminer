@@ -20,12 +20,11 @@ public class UrlTagMiner extends BaseTagMiner {
         for (String w : words) {
             w = w.trim().replaceAll("\\[", "").replaceAll("\\]", "");
 
-            if(w.length() > 1 && !Character.isLetter(w.charAt(w.length()-1)))
-                w = w.substring(0, w.length()-1);
-
             if (TLD.INSTANCE.isUrl(w)) {
 
-                sentence = sentence.replaceFirst(w, TAG);
+                String escaped = "\\Q"+w;
+
+                sentence = sentence.replaceFirst(escaped, TAG);
                 taggedSentence.setTaggedSentence(sentence);
 
                 List<String> values = taggedSentence.getTagValuesMap().get(TAG);

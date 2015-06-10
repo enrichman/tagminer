@@ -49,7 +49,11 @@ public class TagCombiner {
                     }
                     count++;
                 }
-                value += " " + taggedSentence.getTagValuesMap().get(matchingTag).get(index);
+
+                if(!value.equals(""))
+                    value += rule.getSeparator();
+                value += taggedSentence.getTagValuesMap().get(matchingTag).get(index);
+
                 taggedSentence.getTagValuesMap().get(matchingTag).remove(index);
             }
 

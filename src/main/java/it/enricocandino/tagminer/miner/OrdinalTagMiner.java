@@ -12,7 +12,7 @@ import java.util.List;
 public class OrdinalTagMiner extends BaseTagMiner {
 
     private static final String TAG     = "#ORD";
-    private static final String REGEX   = "\\d+(st|nd|rd|th)";
+    private static final String REGEX   = "\\b\\d+(st|nd|rd|th)\\b";
 
     public TaggedSentence mine(TaggedSentence taggedSentence) {
 
@@ -20,9 +20,6 @@ public class OrdinalTagMiner extends BaseTagMiner {
         String[] words = SentenceUtil.getWords(sentence);
         for (String w : words) {
             w = w.trim().replaceAll("\\[", "").replaceAll("\\]", "");
-
-            if(w.length() > 1 && !Character.isLetter(w.charAt(w.length()-1)))
-                w = w.substring(0, w.length()-1);
 
             if (w.matches(REGEX)) {
 

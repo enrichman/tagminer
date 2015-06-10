@@ -3,6 +3,8 @@ package it.enricocandino.tagminer.miner;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -46,11 +48,20 @@ public enum TLD {
         }
     }
 
-    public boolean isUrl(String word) {
-        word = word.toUpperCase();
+    public boolean isUrl(String url) {
+        url = url.toUpperCase();
         for(String tld : tldList) {
-            if(word.endsWith("."+tld)) {
-                return !word.contains("@");
+            if(url.contains("." + tld)) {
+                if (!url.toLowerCase().matches("^\\w+://.*")) {
+                    url = "http://" + url;
+                }
+                try {
+                    new URL(url);
+                } catch (MalformedURLException e) {
+                    return false;
+                }
+
+                return !url.contains("@");
             }
         }
         return false;

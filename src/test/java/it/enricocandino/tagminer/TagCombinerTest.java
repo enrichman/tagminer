@@ -4,6 +4,7 @@ import it.enricocandino.model.TaggedSentence;
 import it.enricocandino.tagminer.combiner.Rule;
 import it.enricocandino.tagminer.combiner.TagCombiner;
 import it.enricocandino.tagminer.miner.MonthTagMiner;
+import it.enricocandino.tagminer.miner.NumberTagMiner;
 import it.enricocandino.tagminer.miner.OrdinalTagMiner;
 import it.enricocandino.tagminer.miner.TagMiner;
 import org.junit.Test;
@@ -163,5 +164,41 @@ public class TagCombinerTest {
         assertEquals(2, taggedSentence.getTagValuesMap().get("#DATE").size());
         assertEquals("Feb 2nd", taggedSentence.getTagValuesMap().get("#DATE").get(0));
         assertEquals("1st March", taggedSentence.getTagValuesMap().get("#DATE").get(1));
+    }
+
+    @Test
+    public void dateCombiner() {
+        String originalSentence = "20 20/20/2000 20-20-2000 fdnukfndsk";
+        String firstTagged      = "#NUM #NUM/#NUM/#NUM #NUM-#NUM-#NUM fdnukfndsk";
+        String resultTagged     = "#NUM #DATE #DATE fdnukfndsk";
+
+        NumberTagMiner ordinalTagMiner = new NumberTagMiner();
+        TaggedSentence taggedSentence = ordinalTagMiner.mine(originalSentence);
+
+        assertEquals(firstTagged, taggedSentence.getTaggedSentence());
+        assertEquals(7, taggedSentence.getTagValuesMap().get("#NUM").size());
+        assertEquals("20", taggedSentence.getTagValuesMap().get("#NUM").get(0));
+        assertEquals("20", taggedSentence.getTagValuesMap().get("#NUM").get(1));
+        assertEquals("20", taggedSentence.getTagValuesMap().get("#NUM").get(2));
+        assertEquals("2000", taggedSentence.getTagValuesMap().get("#NUM").get(3));
+        assertEquals("20", taggedSentence.getTagValuesMap().get("#NUM").get(4));
+        assertEquals("20", taggedSentence.getTagValuesMap().get("#NUM").get(5));
+        assertEquals("2000", taggedSentence.getTagValuesMap().get("#NUM").get(6));
+
+        TagCombiner combiner = new TagCombiner();
+
+        Rule rule1 = new Rule("#DATE", "/", "#NUM", "#NUM", "#NUM");
+        combiner.addRule(rule1);
+        Rule rule2 = new Rule("#DATE", "-", "#NUM", "#NUM", "#NUM");
+        combiner.addRule(rule2);
+
+        taggedSentence = combiner.applyRules(taggedSentence);
+
+        assertEquals(resultTagged, taggedSentence.getTaggedSentence());
+        assertEquals(1, taggedSentence.getTagValuesMap().get("#NUM").size());
+        assertEquals("20", taggedSentence.getTagValuesMap().get("#NUM").get(0));
+        assertEquals(2, taggedSentence.getTagValuesMap().get("#DATE").size());
+        assertEquals("20/20/2000", taggedSentence.getTagValuesMap().get("#DATE").get(0));
+        assertEquals("20-20-2000", taggedSentence.getTagValuesMap().get("#DATE").get(1));
     }
 }

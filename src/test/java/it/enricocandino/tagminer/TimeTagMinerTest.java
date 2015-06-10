@@ -38,4 +38,31 @@ public class TimeTagMinerTest {
         assertEquals("12h 34m 23s", taggedSentence.getTagValuesMap().get("#TIME").get(1));
     }
 
+    @Test
+    public void normalMiningWithAmPmTime() {
+        String originalSentence     = "Una frase con un tempo 12:23pm test";
+        String taggedSentenceResult = "Una frase con un tempo #TIME test";
+
+        TimeTagMiner miner = new TimeTagMiner();
+        TaggedSentence taggedSentence = miner.mine(originalSentence);
+
+        assertEquals(taggedSentenceResult, taggedSentence.getTaggedSentence());
+        assertEquals(1, taggedSentence.getTagValuesMap().get("#TIME").size());
+        assertEquals("12:23pm", taggedSentence.getTagValuesMap().get("#TIME").get(0));
+    }
+    //Jan 12th 2007 4:49AM Sounds
+
+    @Test
+    public void shortMiningWithAmPmTime() {
+        String originalSentence     = "Jan 12th 2007 4:49AM Sounds";
+        String taggedSentenceResult = "Jan 12th 2007 #TIME Sounds";
+
+        TimeTagMiner miner = new TimeTagMiner();
+        TaggedSentence taggedSentence = miner.mine(originalSentence);
+
+        assertEquals(taggedSentenceResult, taggedSentence.getTaggedSentence());
+        assertEquals(1, taggedSentence.getTagValuesMap().get("#TIME").size());
+        assertEquals("4:49AM", taggedSentence.getTagValuesMap().get("#TIME").get(0));
+    }
+
 }

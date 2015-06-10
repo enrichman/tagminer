@@ -14,10 +14,8 @@ public class MonthTagMiner extends BaseTagMiner {
 
     private static final String TAG     = "#MONTH";
 
-    private static final String REGEX_MONTH_FULL =
-            "\\bjanuary\\b|\\bfebruary\\b|\\bmarch\\b|\\bapril\\b|\\bjune\\b|\\bjuly\\b|\\baugust\\b|\\bseptember\\b|\\boctober\\b|\\bnovember\\b|\\bdecember\\b";
-    private static final String REGEX_MONTH_SHORT =
-            "\\bjan\\b|\\bfeb\\b|\\bmar\\b|\\bapr\\b|\\bmay\\b|\\bjun\\b|\\bjul\\b|\\baug\\b|\\bsep\\b|\\boct\\b|\\bnov\\b|\\bdec\\b";
+    private static final String REGEX_MONTH_FULL = "\\b(january|february|march|april|june|july|august|september|october|november|december)\\b";
+    private static final String REGEX_MONTH_SHORT ="\\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\\b";
 
     private static final String REGEX = "("+ REGEX_MONTH_FULL +"|"+ REGEX_MONTH_SHORT +")";
 

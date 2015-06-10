@@ -10,19 +10,16 @@ import java.util.regex.Pattern;
 /**
  * @author Enrico Candino
  */
-public class TimeTagMiner extends BaseTagMiner {
+public class DayTagMiner extends BaseTagMiner {
 
-    private static final String TAG = "#TIME";
+    private static final String TAG = "#DAY";
 
-    private static final String REGEX_HHMMSS = "\\b(([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9])\\b";
-    private static final String REGEX_HHMM_AMPM = "\\b(([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9])(\\b|am|pm)\\b";
-    private static final String REGEX_H_M_S = "[0-2][0-9]h\\s[0-5][0-9]m\\s[0-5][0-9]s";
-    private static final String REGEX_M_S = "[0-5][0-9]m\\s[0-5][0-9]s";
+    private static final String REGEX_DAY_FULL = "\\b(monday|tuesday|wednesday|thursday|friday|saturday|sunday)\\b";
+    private static final String REGEX_DAY_SHORT = "\\b(mon|tue|wed|thu|fri|sat|sun)\\b";
 
-    private static final String REGEX = "("+REGEX_HHMMSS+"|"+REGEX_HHMM_AMPM+"|"+REGEX_H_M_S+"|"+REGEX_M_S+")";
+    private static final String REGEX = "("+ REGEX_DAY_FULL +"|"+ REGEX_DAY_SHORT +")";
 
     public TaggedSentence mine(TaggedSentence taggedSentence) {
-
         String sentence = taggedSentence.getTaggedSentence();
 
         Matcher matcher;

@@ -13,7 +13,7 @@ public class UrlTagMinerTest {
 
     @Test
     public void normalMining() {
-        String originalSentence = "Una frase con un sito web abc.com come questa ad esempio";
+        String originalSentence = "Una frase con un sito web abc.com/dbd/37/bch?378=282/ come questa ad esempio";
         String taggedSentenceResult = "Una frase con un sito web #URL come questa ad esempio";
 
         UrlTagMiner miner = new UrlTagMiner();
@@ -21,7 +21,7 @@ public class UrlTagMinerTest {
 
         assertEquals(taggedSentenceResult, taggedSentence.getTaggedSentence());
         assertEquals(1, taggedSentence.getTagValuesMap().get("#URL").size());
-        assertEquals("abc.com", taggedSentence.getTagValuesMap().get("#URL").get(0));
+        assertEquals("abc.com/dbd/37/bch?378=282/", taggedSentence.getTagValuesMap().get("#URL").get(0));
     }
 
     @Test
