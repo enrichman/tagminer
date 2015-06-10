@@ -1,7 +1,6 @@
-package it.enricocandino.tagminer;
+package it.enricocandino.tagminer.miner;
 
 import it.enricocandino.model.TaggedSentence;
-import it.enricocandino.util.SentenceUtil;
 
 import java.util.ArrayList;
 import java.util.List;

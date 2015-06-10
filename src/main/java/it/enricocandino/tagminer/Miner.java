@@ -1,12 +1,10 @@
 package it.enricocandino.tagminer;
 
-import it.enricocandino.model.Page;
 import it.enricocandino.model.TaggedSentence;
-import it.enricocandino.text.DefaultSentenceFilter;
-import it.enricocandino.text.SentenceSplitter;
-import it.enricocandino.util.SentenceUtil;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
+import it.enricocandino.tagminer.miner.OrdinalTagMiner;
+import it.enricocandino.tagminer.miner.TagMiner;
+import it.enricocandino.tagminer.miner.TimeTagMiner;
+import it.enricocandino.tagminer.miner.UrlTagMiner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,15 +12,14 @@ import java.util.List;
 /**
  * @author Enrico Candino
  */
-public class Miner {
+public abstract class Miner {
 
     private List<TagMiner> miners;
 
-    public Miner() {
-        this.miners = new ArrayList<TagMiner>();
-        this.miners.add(new UrlTagMiner());
-        this.miners.add(new OrdinalTagMiner());
-        this.miners.add(new TimeTagMiner());
+    public void addTagMiner(TagMiner tagMiner) {
+        if(this.miners == null)
+            this.miners = new ArrayList<TagMiner>();
+        this.miners.add(tagMiner);
     }
 
     public List<TaggedSentence> mine(List<String> sentences) {
@@ -38,8 +35,10 @@ public class Miner {
         taggedSentence.setOriginalSentence(sentence);
         taggedSentence.setTaggedSentence(sentence);
 
-        for(TagMiner miner : miners) {
-            taggedSentence = miner.mine(taggedSentence);
+        if(miners != null) {
+            for (TagMiner miner : miners) {
+                taggedSentence = miner.mine(taggedSentence);
+            }
         }
 
         return taggedSentence;

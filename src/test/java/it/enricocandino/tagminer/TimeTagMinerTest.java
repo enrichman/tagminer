@@ -1,6 +1,7 @@
 package it.enricocandino.tagminer;
 
 import it.enricocandino.model.TaggedSentence;
+import it.enricocandino.tagminer.miner.TimeTagMiner;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

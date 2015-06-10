@@ -3,6 +3,7 @@ package it.enricocandino;
 import it.enricocandino.model.Page;
 import it.enricocandino.extractor.reader.ClueWebReader;
 import it.enricocandino.model.TaggedSentence;
+import it.enricocandino.tagminer.DefaultMiner;
 import it.enricocandino.tagminer.Miner;
 import it.enricocandino.text.DefaultSentenceFilter;
 import it.enricocandino.text.SentenceSplitter;
@@ -47,7 +48,7 @@ public class TagMinerMain {
                         continue;
 
                     // mine the sentences!
-                    Miner miner = new Miner();
+                    Miner miner = new DefaultMiner();
                     List<TaggedSentence> taggedSentences = miner.mine(cleanedSentences);
 
                     System.out.println(taggedSentences);

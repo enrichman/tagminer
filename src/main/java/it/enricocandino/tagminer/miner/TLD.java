@@ -1,4 +1,4 @@
-package it.enricocandino.tagminer;
+package it.enricocandino.tagminer.miner;
 
 import java.io.BufferedReader;
 import java.io.IOException;

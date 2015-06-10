@@ -1,4 +1,4 @@
-package it.enricocandino.tagminer;
+package it.enricocandino.tagminer.miner;
 
 import it.enricocandino.model.TaggedSentence;
 

@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * @author Enrico Candino
  */
-public class SentenceFilter {
+public abstract class SentenceFilter {
 
     private List<Filter> filters;
 

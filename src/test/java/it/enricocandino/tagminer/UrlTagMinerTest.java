@@ -1,12 +1,10 @@
 package it.enricocandino.tagminer;
 
 import it.enricocandino.model.TaggedSentence;
-import it.enricocandino.tagminer.UrlTagMiner;
+import it.enricocandino.tagminer.miner.UrlTagMiner;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-
-import java.util.List;
 
 /**
  * @author Enrico Candino

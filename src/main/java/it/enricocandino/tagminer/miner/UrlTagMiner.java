@@ -1,4 +1,4 @@
-package it.enricocandino.tagminer;
+package it.enricocandino.tagminer.miner;
 
 import it.enricocandino.model.TaggedSentence;
 import it.enricocandino.util.SentenceUtil;
@@ -9,10 +9,9 @@ import java.util.List;
 /**
  * @author Enrico Candino
  */
-public class OrdinalTagMiner extends BaseTagMiner {
+public class UrlTagMiner extends BaseTagMiner {
 
-    private static final String TAG     = "#ORD";
-    private static final String REGEX   = "\\d+(st|nd|rd|th)";
+    private static final String TAG = "#URL";
 
     public TaggedSentence mine(TaggedSentence taggedSentence) {
 
@@ -24,7 +23,7 @@ public class OrdinalTagMiner extends BaseTagMiner {
             if(w.length() > 1 && !Character.isLetter(w.charAt(w.length()-1)))
                 w = w.substring(0, w.length()-1);
 
-            if (w.matches(REGEX)) {
+            if (TLD.INSTANCE.isUrl(w)) {
 
                 sentence = sentence.replaceFirst(w, TAG);
                 taggedSentence.setTaggedSentence(sentence);
