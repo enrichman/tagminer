@@ -65,4 +65,17 @@ public class TimeTagMinerTest {
         assertEquals("4:49AM", taggedSentence.getTagValuesMap().get("#TIME").get(0));
     }
 
+    @Test
+    public void miningWithAmPmAndSpaceTime() {
+        String originalSentence     = "4:49 AM";
+        String taggedSentenceResult = "#TIME";
+
+        TimeTagMiner miner = new TimeTagMiner();
+        TaggedSentence taggedSentence = miner.mine(originalSentence);
+
+        assertEquals(taggedSentenceResult, taggedSentence.getTaggedSentence());
+        assertEquals(1, taggedSentence.getTagValuesMap().get("#TIME").size());
+        assertEquals("4:49 AM", taggedSentence.getTagValuesMap().get("#TIME").get(0));
+    }
+
 }

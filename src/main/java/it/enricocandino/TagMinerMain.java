@@ -22,9 +22,12 @@ import java.util.List;
  */
 public class TagMinerMain {
 
-    private static final String BASE_FOLDER = "/Users/enrico/Documents/UNI-MAGISTRALE/Analisi e Gestione dell'informazione su Web/warc/";
-
     public static void main(String[] args) {
+
+        if(args.length == 0) {
+            System.out.print("ERROR: missing arguments with the warc paths");
+            return;
+        }
 
         String[] files = new String[] { "out1", "out2", "out3" };
         for(String filename : files) {
@@ -37,9 +40,8 @@ public class TagMinerMain {
         try {
             ClueWebReader reader = new ClueWebReader();
 
-            for (int i = 0; i < 1; i++) {
-                String path = BASE_FOLDER + "0" + i + ".warc.gz";
-                List<Page> pages = reader.read(path);
+            for (int i = 0; i<args.length; i++) {
+                List<Page> pages = reader.read(args[0]);
 
                 List<TaggedSentence> pageSentences = new ArrayList<TaggedSentence>();
 
