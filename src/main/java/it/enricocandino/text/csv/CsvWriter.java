@@ -31,7 +31,7 @@ public class CsvWriter {
             for(String tag : sentence.getTagValuesMap().keySet()) {
                 List<String> values = sentence.getTagValuesMap().get(tag);
                 for(String val : values) {
-                    lines.add(tag+"\t"+val);
+                    lines.add(sentence.getWarcId()+"\t"+val+"\t"+tag);
                 }
             }
         }
@@ -41,7 +41,7 @@ public class CsvWriter {
     private List<String> getSecondCsvLines(List<TaggedSentence> taggedSentences) {
         List<String> lines = new ArrayList<String>();
         for(TaggedSentence sentence : taggedSentences) {
-            lines.add(sentence.getOriginalSentence());
+            lines.add(sentence.getWarcId()+"\t"+sentence.getOriginalSentence());
         }
         return lines;
     }
@@ -49,7 +49,7 @@ public class CsvWriter {
     private List<String> getThirdCsvLines(List<TaggedSentence> taggedSentences) {
         List<String> lines = new ArrayList<String>();
         for(TaggedSentence sentence : taggedSentences) {
-            lines.add(sentence.getTaggedSentence());
+            lines.add(sentence.getWarcId()+"\t"+sentence.getTaggedSentence());
         }
         return lines;
     }

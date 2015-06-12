@@ -20,6 +20,13 @@ public class TagCombiner {
         rules.add(rule);
     }
 
+    public List<TaggedSentence> applyRules(List<TaggedSentence> taggedSentences) {
+        for(TaggedSentence taggedSentence : taggedSentences) {
+            taggedSentence = applyRules(taggedSentence);
+        }
+        return taggedSentences;
+    }
+
     public TaggedSentence applyRules(TaggedSentence taggedSentence) {
         for(Rule rule : rules) {
             taggedSentence = applyRule(rule, taggedSentence);
@@ -29,10 +36,13 @@ public class TagCombiner {
 
     public TaggedSentence applyRule(Rule rule, TaggedSentence taggedSentence) {
         String regex = rule.getRegex();
+
         Matcher matcher = Pattern.compile(regex).matcher(taggedSentence.getTaggedSentence());
 
         while(matcher.find()) {
-            String valueToReplace = matcher.group();
+            Matcher offsetMatcher = Pattern.compile(regex).matcher(taggedSentence.getTaggedSentence());
+            offsetMatcher.find();
+            String valueToReplace = offsetMatcher.group();
 
             String value = "";
             for(String matchingTag : rule.getMatchingTags()) {
@@ -40,11 +50,11 @@ public class TagCombiner {
                 // find the matching
                 int index = 0;
                 int count = 0;
-                int offset = regex.indexOf(matchingTag);
+                int offset = regex.indexOf(matchingTag) -2; // needed for the escape of \Q !!!
 
                 Matcher tagMatcher = Pattern.compile(matchingTag).matcher(taggedSentence.getTaggedSentence());
                 while(tagMatcher.find()) {
-                    if((matcher.start()+offset) == tagMatcher.start()) {
+                    if((offsetMatcher.start()+offset) == tagMatcher.start()) {
                         index = count;
                     }
                     count++;

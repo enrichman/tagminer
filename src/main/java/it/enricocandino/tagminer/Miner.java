@@ -22,16 +22,17 @@ public abstract class Miner {
         this.miners.add(tagMiner);
     }
 
-    public List<TaggedSentence> mine(List<String> sentences) {
+    public List<TaggedSentence> mine(String warcId, List<String> sentences) {
         List<TaggedSentence> taggedSentences = new ArrayList<TaggedSentence>();
         for(String sentence : sentences) {
-            taggedSentences.add(mine(sentence));
+            taggedSentences.add(mine(warcId, sentence));
         }
         return taggedSentences;
     }
 
-    public TaggedSentence mine(String sentence) {
+    public TaggedSentence mine(String warcId, String sentence) {
         TaggedSentence taggedSentence = new TaggedSentence();
+        taggedSentence.setWarcId(warcId);
         taggedSentence.setOriginalSentence(sentence);
         taggedSentence.setTaggedSentence(sentence);
 

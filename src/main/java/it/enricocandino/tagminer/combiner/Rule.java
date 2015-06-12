@@ -9,7 +9,7 @@ public class Rule {
     private String[] matchingTags;
     private String separator = " ";
 
-    private String regex = "";
+    private String regex = "\\Q";
 
     public Rule(String tag, String separator, String... matchingTags) {
         this.tag = tag;
@@ -18,7 +18,7 @@ public class Rule {
 
         for(int i=0; i<matchingTags.length; i++) {
             if(i==0)
-                regex = matchingTags[i];
+                regex += matchingTags[i];
             else
                 regex += separator + matchingTags[i];
         }

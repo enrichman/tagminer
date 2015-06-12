@@ -5,6 +5,8 @@ import it.enricocandino.extractor.reader.ClueWebReader;
 import it.enricocandino.model.TaggedSentence;
 import it.enricocandino.tagminer.DefaultMiner;
 import it.enricocandino.tagminer.Miner;
+import it.enricocandino.tagminer.combiner.Rule;
+import it.enricocandino.tagminer.combiner.TagCombiner;
 import it.enricocandino.text.DefaultSentenceFilter;
 import it.enricocandino.text.SentenceSplitter;
 import it.enricocandino.text.csv.CsvWriter;
@@ -61,7 +63,20 @@ public class TagMinerMain {
 
                     // mine the sentences!
                     Miner miner = new DefaultMiner();
-                    List<TaggedSentence> taggedSentences = miner.mine(cleanedSentences);
+                    List<TaggedSentence> taggedSentences = miner.mine(p.getWarcID(), cleanedSentences);
+
+                    // combine tags following the rules
+                    TagCombiner combiner = new TagCombiner();
+                    Rule rule1 = new Rule("#DATE", "/", "#NUM", "#NUM", "#NUM");
+                    combiner.addRule(rule1);
+                    Rule rule2 = new Rule("#DATE", "-", "#NUM", "#NUM", "#NUM");
+                    combiner.addRule(rule2);
+                    Rule rule3 = new Rule("#DATE", ".", "#NUM", "#NUM", "#NUM");
+                    combiner.addRule(rule3);
+                    Rule rule4 = new Rule("#DATE", " ", "#MONTH", "#ORD", "#NUM", "#TIME");
+                    combiner.addRule(rule4);
+                    taggedSentences = combiner.applyRules(taggedSentences);
+
 
                     System.out.println(taggedSentences);
                     pageSentences.addAll(taggedSentences);

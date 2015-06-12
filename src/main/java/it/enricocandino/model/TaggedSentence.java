@@ -9,12 +9,21 @@ import java.util.Map;
  */
 public class TaggedSentence {
 
+    private String warcId;
     private String originalSentence;
     private String taggedSentence;
     private Map<String, List<String>> tagValuesMap;
 
     public TaggedSentence() {
         tagValuesMap = new HashMap<String, List<String>>();
+    }
+
+    public String getWarcId() {
+        return warcId;
+    }
+
+    public void setWarcId(String warcId) {
+        this.warcId = warcId;
     }
 
     public String getOriginalSentence() {
