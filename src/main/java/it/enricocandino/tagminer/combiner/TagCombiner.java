@@ -52,7 +52,7 @@ public class TagCombiner {
                 int count = 0;
                 int offset = regex.indexOf(matchingTag) -2; // needed for the escape of \Q !!!
 
-                Matcher tagMatcher = Pattern.compile(matchingTag).matcher(taggedSentence.getTaggedSentence());
+                Matcher tagMatcher = Pattern.compile(matchingTag+"\\b").matcher(taggedSentence.getTaggedSentence());
                 while(tagMatcher.find()) {
                     if((offsetMatcher.start()+offset) == tagMatcher.start()) {
                         index = count;

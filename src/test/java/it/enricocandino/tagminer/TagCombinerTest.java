@@ -280,6 +280,43 @@ public class TagCombinerTest {
         assertEquals(0, taggedSentence.getTagValuesMap().get("#TIME").size());
         assertEquals(1, taggedSentence.getTagValuesMap().get("#DATE").size());
         assertEquals("Jan 2nd 2009 9:06AM", taggedSentence.getTagValuesMap().get("#DATE").get(0));
+
+        Rule rule6 = new Rule("#MONTH_YEAR", " ", "#MONTH", "#NUM");
+        combiner.addRule(rule6);
+    }
+
+    @Test
+    public void monthNum() {
+        String originalSentence = "Jan 2009";
+
+        String firstTagged      = "#MONTH #NUM";
+        String resultTagged     = "#MONTH_YEAR";
+
+        NumberTagMiner numberTagMiner = new NumberTagMiner();
+        TaggedSentence taggedSentence = numberTagMiner.mine(originalSentence);
+        MonthTagMiner monthTagMiner = new MonthTagMiner();
+        taggedSentence = monthTagMiner.mine(taggedSentence);
+
+        assertEquals(firstTagged, taggedSentence.getTaggedSentence());
+        assertEquals(1, taggedSentence.getTagValuesMap().get("#NUM").size());
+        assertEquals("2009", taggedSentence.getTagValuesMap().get("#NUM").get(0));
+        assertEquals(1, taggedSentence.getTagValuesMap().get("#MONTH").size());
+        assertEquals("Jan", taggedSentence.getTagValuesMap().get("#MONTH").get(0));
+        TagCombiner combiner = new TagCombiner();
+
+        Rule rule6 = new Rule("#MONTH_YEAR", " ", "#MONTH", "#NUM");
+        combiner.addRule(rule6);
+
+        taggedSentence = combiner.applyRules(taggedSentence);
+
+        assertEquals(resultTagged, taggedSentence.getTaggedSentence());
+        assertEquals(0, taggedSentence.getTagValuesMap().get("#NUM").size());
+        assertEquals(0, taggedSentence.getTagValuesMap().get("#MONTH").size());
+        assertEquals(0, taggedSentence.getTagValuesMap().get("#ORD").size());
+        assertEquals(0, taggedSentence.getTagValuesMap().get("#TIME").size());
+        assertEquals(1, taggedSentence.getTagValuesMap().get("#DATE").size());
+
+        assertEquals("Jan 2nd 2009 9:06AM", taggedSentence.getTagValuesMap().get("#DATE").get(0));
     }
 
 }

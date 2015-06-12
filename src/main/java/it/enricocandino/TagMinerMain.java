@@ -69,6 +69,7 @@ public class TagMinerMain {
 
                     // combine tags following the rules
                     TagCombiner combiner = new TagCombiner();
+
                     Rule rule1 = new Rule("#DATE", "/", "#NUM", "#NUM", "#NUM");
                     combiner.addRule(rule1);
                     Rule rule2 = new Rule("#DATE", "-", "#NUM", "#NUM", "#NUM");
@@ -77,10 +78,13 @@ public class TagMinerMain {
                     combiner.addRule(rule3);
                     Rule rule4 = new Rule("#DATE", " ", "#MONTH", "#ORD", "#NUM", "#TIME");
                     combiner.addRule(rule4);
+                    Rule rule5 = new Rule("#DATE", " ", "#NUM", "#MONTH", "#NUM", "#TIME");
+                    combiner.addRule(rule5);
+                    Rule rule6 = new Rule("#MONTH_YEAR", " ", "#MONTH", "#NUM");
+                    combiner.addRule(rule6);
                     taggedSentences = combiner.applyRules(taggedSentences);
 
 
-                    System.out.println(taggedSentences);
                     pageSentences.addAll(taggedSentences);
                 }
 
