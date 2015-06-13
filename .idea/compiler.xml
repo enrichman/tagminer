@@ -21,10 +21,14 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
+        <module name="batch-extractor" />
+        <module name="search-batch" />
         <module name="TagMiner" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="batch-extractor" target="1.5" />
+      <module name="search-batch" target="1.5" />
       <module name="TagMiner" target="1.5" />
     </bytecodeTargetLevel>
   </component>
