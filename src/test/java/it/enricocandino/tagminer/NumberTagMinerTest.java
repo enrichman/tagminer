@@ -15,7 +15,7 @@ public class NumberTagMinerTest {
     @Test
     public void normalMining() {
         String originalSentence = "Una frase con un numero 334 a caso";
-        String taggedSentenceResult = "Una frase con una giorno #NUM a caso";
+        String taggedSentenceResult = "Una frase con un numero #NUM a caso";
 
         NumberTagMiner miner = new NumberTagMiner();
         TaggedSentence taggedSentence = miner.mine(originalSentence);

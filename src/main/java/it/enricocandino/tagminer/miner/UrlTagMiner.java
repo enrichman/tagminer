@@ -1,10 +1,9 @@
 package it.enricocandino.tagminer.miner;
 
 import it.enricocandino.model.TaggedSentence;
-import it.enricocandino.util.SentenceUtil;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Enrico Candino
@@ -13,25 +12,25 @@ public class UrlTagMiner extends BaseTagMiner {
 
     private static final String TAG = "#URL";
 
+    private static final String REGEX = "(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w\\?\\=\\&\\.-]*)*\\/?";
+
     public TaggedSentence mine(TaggedSentence taggedSentence) {
 
         String sentence = taggedSentence.getTaggedSentence();
-        String[] words = SentenceUtil.getWords(sentence);
-        for (String w : words) {
-            w = w.trim().replaceAll("\\[", "").replaceAll("\\]", "");
 
-            if (TLD.INSTANCE.isUrl(w)) {
+        Matcher matcher;
+        matcher = Pattern.compile(REGEX, Pattern.CASE_INSENSITIVE).matcher(sentence);
+        if (matcher.find()) {
 
-                String escaped = "\\Q"+w;
+            String url = matcher.group();
 
-                sentence = sentence.replaceFirst(escaped, TAG);
+            if (TLD.INSTANCE.isUrl(url)) {
+
+                sentence = sentence.replaceFirst("(?i)"+REGEX, TAG);
                 taggedSentence.setTaggedSentence(sentence);
+                taggedSentence = setValue(TAG, url, taggedSentence);
 
-                List<String> values = taggedSentence.getTagValuesMap().get(TAG);
-                if(values == null)
-                    values = new ArrayList<String>();
-                values.add(w);
-                taggedSentence.getTagValuesMap().put(TAG, values);
+                mine(taggedSentence);
             }
         }
 

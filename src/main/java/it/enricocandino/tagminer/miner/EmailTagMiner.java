@@ -1,10 +1,8 @@
 package it.enricocandino.tagminer.miner;
 
 import it.enricocandino.model.TaggedSentence;
-import it.enricocandino.util.SentenceUtil;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Enrico Candino
@@ -12,26 +10,25 @@ import java.util.List;
 public class EmailTagMiner extends BaseTagMiner {
 
     private static final String TAG = "#EMAIL";
+    private static final String REGEX = "\\b([a-z0-9_\\.\\+-]+)@([\\da-z\\.-]+)\\.([a-z\\.]{2,6})\\b";
 
     public TaggedSentence mine(TaggedSentence taggedSentence) {
 
         String sentence = taggedSentence.getTaggedSentence();
-        String[] words = SentenceUtil.getWords(sentence);
-        for (String w : words) {
-            w = w.trim().replaceAll("\\[", "").replaceAll("\\]", "");
 
-            if (TLD.INSTANCE.isEmail(w)) {
+        Matcher matcher;
+        matcher = Pattern.compile(REGEX, Pattern.CASE_INSENSITIVE).matcher(sentence);
+        if (matcher.find()) {
 
-                String escaped = "\\Q"+w;
+            String email = matcher.group();
 
-                sentence = sentence.replaceFirst(escaped, TAG);
+            if (TLD.INSTANCE.isEmail(email)) {
+
+                sentence = sentence.replaceFirst("(?i)"+REGEX, TAG);
                 taggedSentence.setTaggedSentence(sentence);
+                taggedSentence = setValue(TAG, email, taggedSentence);
 
-                List<String> values = taggedSentence.getTagValuesMap().get(TAG);
-                if(values == null)
-                    values = new ArrayList<String>();
-                values.add(w);
-                taggedSentence.getTagValuesMap().put(TAG, values);
+                mine(taggedSentence);
             }
         }
 

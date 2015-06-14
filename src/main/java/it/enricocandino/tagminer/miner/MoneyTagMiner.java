@@ -23,20 +23,10 @@ public class MoneyTagMiner extends BaseTagMiner {
         if (matcher.find()) {
             sentence = sentence.replaceFirst(REGEX, TAG);
             taggedSentence.setTaggedSentence(sentence);
-            taggedSentence = setValue(matcher.group(), taggedSentence);
+            taggedSentence = setValue(TAG, matcher.group(), taggedSentence);
 
             mine(taggedSentence);
         }
-
-        return taggedSentence;
-    }
-
-    private TaggedSentence setValue(String value, TaggedSentence taggedSentence) {
-        List<String> values = taggedSentence.getTagValuesMap().get(TAG);
-        if (values == null)
-            values = new ArrayList<String>();
-        values.add(value);
-        taggedSentence.getTagValuesMap().put(TAG, values);
 
         return taggedSentence;
     }

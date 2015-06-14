@@ -34,7 +34,7 @@ public class TagCombinerTest {
         assertEquals(1, taggedSentence.getTagValuesMap().get("#MONTH").size());
         assertEquals("March", taggedSentence.getTagValuesMap().get("#MONTH").get(0));
 
-        Rule rule = new Rule("#DATE", "#MONTH", "#ORD");
+        Rule rule = new Rule("#DATE", " ", "#MONTH", "#ORD");
         TagCombiner combiner = new TagCombiner();
         combiner.addRule(rule);
 
@@ -70,7 +70,7 @@ public class TagCombinerTest {
         assertEquals("March", taggedSentence.getTagValuesMap().get("#MONTH").get(0));
         assertEquals("Feb", taggedSentence.getTagValuesMap().get("#MONTH").get(1));
 
-        Rule rule = new Rule("#DATE", "#MONTH", "#ORD");
+        Rule rule = new Rule("#DATE", " ", "#MONTH", "#ORD");
         TagCombiner combiner = new TagCombiner();
         combiner.addRule(rule);
 
@@ -109,7 +109,7 @@ public class TagCombinerTest {
 
         TagCombiner combiner = new TagCombiner();
 
-        Rule rule = new Rule("#DATE", "#MONTH", "#ORD");
+        Rule rule = new Rule("#DATE", " ", "#MONTH", "#ORD");
         combiner.addRule(rule);
 
         taggedSentence = combiner.applyRules(taggedSentence);
@@ -148,9 +148,9 @@ public class TagCombinerTest {
 
         TagCombiner combiner = new TagCombiner();
 
-        Rule rule = new Rule("#DATE", "#MONTH", "#ORD");
+        Rule rule = new Rule("#DATE", " ", "#MONTH", "#ORD");
         combiner.addRule(rule);
-        Rule ruleInverted = new Rule("#DATE", "#ORD", "#MONTH");
+        Rule ruleInverted = new Rule("#DATE", " ", "#ORD", "#MONTH");
         combiner.addRule(ruleInverted);
 
         taggedSentence = combiner.applyRules(taggedSentence);
@@ -280,9 +280,6 @@ public class TagCombinerTest {
         assertEquals(0, taggedSentence.getTagValuesMap().get("#TIME").size());
         assertEquals(1, taggedSentence.getTagValuesMap().get("#DATE").size());
         assertEquals("Jan 2nd 2009 9:06AM", taggedSentence.getTagValuesMap().get("#DATE").get(0));
-
-        Rule rule6 = new Rule("#MONTH_YEAR", " ", "#MONTH", "#NUM");
-        combiner.addRule(rule6);
     }
 
     @Test
@@ -312,11 +309,39 @@ public class TagCombinerTest {
         assertEquals(resultTagged, taggedSentence.getTaggedSentence());
         assertEquals(0, taggedSentence.getTagValuesMap().get("#NUM").size());
         assertEquals(0, taggedSentence.getTagValuesMap().get("#MONTH").size());
-        assertEquals(0, taggedSentence.getTagValuesMap().get("#ORD").size());
-        assertEquals(0, taggedSentence.getTagValuesMap().get("#TIME").size());
-        assertEquals(1, taggedSentence.getTagValuesMap().get("#DATE").size());
+        assertEquals(1, taggedSentence.getTagValuesMap().get("#MONTH_YEAR").size());
+        assertEquals("Jan 2009", taggedSentence.getTagValuesMap().get("#MONTH_YEAR").get(0));
+    }
 
-        assertEquals("Jan 2nd 2009 9:06AM", taggedSentence.getTagValuesMap().get("#DATE").get(0));
+    @Test
+    public void monthNumComma() {
+        String originalSentence = "January, 2009";
+
+        String firstTagged      = "#MONTH, #NUM";
+        String resultTagged     = "#DATE";
+
+        NumberTagMiner numberTagMiner = new NumberTagMiner();
+        TaggedSentence taggedSentence = numberTagMiner.mine(originalSentence);
+        MonthTagMiner monthTagMiner = new MonthTagMiner();
+        taggedSentence = monthTagMiner.mine(taggedSentence);
+
+        assertEquals(firstTagged, taggedSentence.getTaggedSentence());
+        assertEquals(1, taggedSentence.getTagValuesMap().get("#NUM").size());
+        assertEquals("2009", taggedSentence.getTagValuesMap().get("#NUM").get(0));
+        assertEquals(1, taggedSentence.getTagValuesMap().get("#MONTH").size());
+        assertEquals("January", taggedSentence.getTagValuesMap().get("#MONTH").get(0));
+        TagCombiner combiner = new TagCombiner();
+
+        Rule rule6 = new Rule("#DATE", ", ", "#MONTH", "#NUM");
+        combiner.addRule(rule6);
+
+        taggedSentence = combiner.applyRules(taggedSentence);
+
+        assertEquals(resultTagged, taggedSentence.getTaggedSentence());
+        assertEquals(0, taggedSentence.getTagValuesMap().get("#NUM").size());
+        assertEquals(0, taggedSentence.getTagValuesMap().get("#MONTH").size());
+        assertEquals(1, taggedSentence.getTagValuesMap().get("#DATE").size());
+        assertEquals("January, 2009", taggedSentence.getTagValuesMap().get("#DATE").get(0));
     }
 
 }
