@@ -25,22 +25,18 @@ public class DayTagMiner extends BaseTagMiner {
 
         Matcher matcher;
         matcher = Pattern.compile(REGEX, Pattern.CASE_INSENSITIVE).matcher(sentence);
-        if (matcher.find()) {
+        while (matcher.find()) {
             sentence = sentence.replaceFirst("(?i)"+REGEX, TAG);
             taggedSentence.setTaggedSentence(sentence);
             taggedSentence = setValue(TAG, matcher.group(), taggedSentence);
-
-            mine(taggedSentence);
         }
 
         // Sunday need to be checked in a case sensitive way
         matcher = Pattern.compile(REGEX_SUN).matcher(sentence);
-        if (matcher.find()) {
+        while (matcher.find()) {
             sentence = sentence.replaceFirst(REGEX_SUN, TAG);
             taggedSentence.setTaggedSentence(sentence);
             taggedSentence = setValue(TAG, matcher.group(), taggedSentence);
-
-            mine(taggedSentence);
         }
 
         return taggedSentence;

@@ -19,12 +19,10 @@ public class OrdinalTagMiner extends BaseTagMiner {
 
         Matcher matcher;
         matcher = Pattern.compile(REGEX).matcher(sentence);
-        if (matcher.find()) {
+        while (matcher.find()) {
             sentence = sentence.replaceFirst(REGEX, TAG);
             taggedSentence.setTaggedSentence(sentence);
             taggedSentence = setValue(TAG, matcher.group(), taggedSentence);
-
-            mine(taggedSentence);
         }
 
         return taggedSentence;
