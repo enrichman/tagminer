@@ -60,24 +60,11 @@ public class ClueWebReader {
                 scanner.close();
 
                 String responseBody = responseBuilder.toString();
-
                 responseBody = responseBody.trim();
+
                 if (responseBody.length() > 0) {
-
-                    /*
-                    Document doc = Jsoup.parse(responseBody);
-                    Elements titleElem = doc.select("title");
-                    String title = "";
-                    if (titleElem != null && titleElem.size() > 0)
-                        title = titleElem.get(0).text();
-
-                    String bodyText = "";
-                    if (doc.body() != null)
-                        bodyText = doc.body().text();
-                        */
-
                     Page page = new Page();
-                    page.setWarcID(htmlRecord.getRawRecord().getHeaderMetadataItem("WARC-Record-ID"));
+                    page.setWarcID(htmlRecord.getRawRecord().getHeaderMetadataItem("WARC-TREC-ID"));
                     page.setHtml(responseBody);
                     pages.add(page);
                 }

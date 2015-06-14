@@ -5,7 +5,7 @@ import it.enricocandino.extractor.reader.ClueWebReader;
 import it.enricocandino.model.TaggedSentence;
 import it.enricocandino.tagminer.DefaultMiner;
 import it.enricocandino.tagminer.Miner;
-import it.enricocandino.tagminer.combiner.Rule;
+import it.enricocandino.tagminer.combiner.DefaultTagCombiner;
 import it.enricocandino.tagminer.combiner.TagCombiner;
 import it.enricocandino.text.DefaultSentenceFilter;
 import it.enricocandino.text.SentenceSplitter;
@@ -27,13 +27,6 @@ public class TagMinerMain {
         if(args.length == 0) {
             System.out.print("ERROR: missing arguments with the warc paths");
             return;
-        }
-
-        String[] files = new String[] { "out1", "out2", "out3" };
-        for(String filename : files) {
-            File file = new File(filename);
-            if (file.exists())
-                file.delete();
         }
 
         // Read the warc file
@@ -67,28 +60,14 @@ public class TagMinerMain {
                     Miner miner = new DefaultMiner();
                     List<TaggedSentence> taggedSentences = miner.mine(p.getWarcID(), cleanedSentences);
 
-                    // combine tags following the rules
-                    TagCombiner combiner = new TagCombiner();
-
-                    Rule rule1 = new Rule("#DATE", "/", "#NUM", "#NUM", "#NUM");
-                    combiner.addRule(rule1);
-                    Rule rule2 = new Rule("#DATE", "-", "#NUM", "#NUM", "#NUM");
-                    combiner.addRule(rule2);
-                    Rule rule3 = new Rule("#DATE", ".", "#NUM", "#NUM", "#NUM");
-                    combiner.addRule(rule3);
-                    Rule rule4 = new Rule("#DATE", " ", "#MONTH", "#ORD", "#NUM", "#TIME");
-                    combiner.addRule(rule4);
-                    Rule rule5 = new Rule("#DATE", " ", "#NUM", "#MONTH", "#NUM", "#TIME");
-                    combiner.addRule(rule5);
-                    Rule rule6 = new Rule("#MONTH_YEAR", " ", "#MONTH", "#NUM");
-                    combiner.addRule(rule6);
+                    // combine tags following the default rules
+                    TagCombiner combiner = new DefaultTagCombiner();
                     taggedSentences = combiner.applyRules(taggedSentences);
-
 
                     pageSentences.addAll(taggedSentences);
                 }
 
-                CsvWriter writer = new CsvWriter();
+                CsvWriter writer = new CsvWriter("out1", "out2", "out3");
                 writer.write(pageSentences);
             }
         } catch (Exception e) {
