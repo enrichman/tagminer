@@ -46,6 +46,7 @@
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/../batch-extractor/pom.xml" />
+        <option value="$PROJECT_DIR$/../search-batch/pom.xml" />
       </list>
     </option>
   </component>
