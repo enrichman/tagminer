@@ -2,85 +2,106 @@ package it.enricocandino.extractor.reader;
 
 import clueweb09.WarcHTMLResponseRecord;
 import clueweb09.WarcRecord;
+import it.enricocandino.Worker;
 import it.enricocandino.model.Page;
+import it.enricocandino.text.csv.CsvWriter;
 
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
 import java.util.zip.GZIPInputStream;
 
 
 public class ClueWebReader {
 
-    public List<Page> read(String path) throws Exception {
+    private ExecutorService pool;
+    private CsvWriter writer;
+
+    public ClueWebReader(ExecutorService pool, CsvWriter writer) {
+        this.pool = pool;
+        this.writer = writer;
+    }
+
+    public void read(String path) throws Exception {
+
+        System.out.println("Start reading WARC file [ " + path + " ]");
         long start = System.currentTimeMillis();
 
         GZIPInputStream gzInputStream = new GZIPInputStream(new FileInputStream(path));
-        DataInputStream inStream = new DataInputStream(gzInputStream);
-
-        List<Page> pages = new ArrayList<Page>(50000);
+        DataInputStream inStream = new DataInputStream(new BufferedInputStream(gzInputStream));
 
         WarcRecord thisWarcRecord;
         int count = 1;
 
         while ((thisWarcRecord = WarcRecord.readNextWarcRecord(inStream)) != null) {
             if (thisWarcRecord.getHeaderRecordType().equals("response")) {
-                WarcHTMLResponseRecord htmlRecord = new WarcHTMLResponseRecord(thisWarcRecord);
-                String url = htmlRecord.getTargetURI();
 
-                if(count%100 == 0)
-                    System.out.println("["+count+"] " + url);
+                String url = thisWarcRecord.getHeaderMetadataItem("WARC-Target-URI");
+                if (count % 100 == 0)
+                    System.out.println("[" + count + "] " + url);
 
-                String rawResponse = new String(htmlRecord.getRawRecord().getByteContent(), "iso-8859-1");
-
-                boolean isTextFile = false;
-                boolean headerRead = false;
-
-                StringBuilder responseBuilder = new StringBuilder(htmlRecord.getRawRecord().getTotalRecordLength());
-
-                Scanner scanner = new Scanner(rawResponse);
-                while (scanner.hasNextLine()) {
-                    String line = scanner.nextLine();
-                    if (line.startsWith("Content-Type:") && line.contains("text")) {
-                        isTextFile = true;
-                    }
-
-                    // header end: check if is text file or is to skip
-                    if (line.equals("") || headerRead) {
-                        headerRead = true;
-                        if (!isTextFile) {
-                            break;
-                        } else {
-                            responseBuilder.append(line);
-                        }
-                    }
-                }
-                scanner.close();
-
-                String responseBody = responseBuilder.toString();
-                responseBody = responseBody.trim();
-
-                if (responseBody.length() > 0) {
-                    Page page = new Page();
-                    page.setWarcID(htmlRecord.getRawRecord().getHeaderMetadataItem("WARC-TREC-ID"));
-                    page.setHtml(responseBody);
-                    pages.add(page);
-                }
+                Page page = buildPageFromWarcRecord(thisWarcRecord);
+                if (page != null)
+                    pool.execute(new Worker(writer, page));
 
                 count++;
-
-                if(count>1000)
-                    break;
             }
         }
 
         inStream.close();
 
-        System.out.println("Finish read in "+(System.currentTimeMillis()-start));
+        System.out.println("Finish read WARC file in " + (System.currentTimeMillis() - start));
+    }
 
-        return pages;
+    private Page buildPageFromWarcRecord(WarcRecord record) {
+        Page page = null;
+
+        try {
+            WarcHTMLResponseRecord htmlRecord = new WarcHTMLResponseRecord(record);
+            String url = htmlRecord.getTargetURI();
+
+            String rawResponse = new String(htmlRecord.getRawRecord().getByteContent(), "iso-8859-1");
+
+            boolean isTextFile = false;
+            boolean headerRead = false;
+
+            StringBuilder responseBuilder = new StringBuilder(htmlRecord.getRawRecord().getTotalRecordLength());
+
+            Scanner scanner = new Scanner(rawResponse);
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                if (line.startsWith("Content-Type:") && line.contains("text")) {
+                    isTextFile = true;
+                }
+
+                // header end: check if is text file or is to skip
+                if (line.equals("") || headerRead) {
+                    headerRead = true;
+                    if (!isTextFile) {
+                        break;
+                    } else {
+                        responseBuilder.append(line);
+                    }
+                }
+            }
+            scanner.close();
+
+            String responseBody = responseBuilder.toString();
+            responseBody = responseBody.trim();
+
+            if (responseBody.length() > 0) {
+                page = new Page();
+                page.setWarcID(htmlRecord.getRawRecord().getHeaderMetadataItem("WARC-TREC-ID"));
+                page.setHtml(responseBody);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return page;
     }
 
 }
