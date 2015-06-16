@@ -42,9 +42,7 @@ public class ClueWebReader {
                 if (count % 100 == 0)
                     System.out.println("[" + count + "] " + url);
 
-                Page page = buildPageFromWarcRecord(thisWarcRecord);
-                if (page != null)
-                    pool.execute(new Worker(writer, page));
+                pool.execute(new Worker(writer, thisWarcRecord));
 
                 count++;
             }
@@ -53,55 +51,6 @@ public class ClueWebReader {
         inStream.close();
 
         System.out.println("Finish read WARC file in " + (System.currentTimeMillis() - start));
-    }
-
-    private Page buildPageFromWarcRecord(WarcRecord record) {
-        Page page = null;
-
-        try {
-            WarcHTMLResponseRecord htmlRecord = new WarcHTMLResponseRecord(record);
-            String url = htmlRecord.getTargetURI();
-
-            String rawResponse = new String(htmlRecord.getRawRecord().getByteContent(), "iso-8859-1");
-
-            boolean isTextFile = false;
-            boolean headerRead = false;
-
-            StringBuilder responseBuilder = new StringBuilder(htmlRecord.getRawRecord().getTotalRecordLength());
-
-            Scanner scanner = new Scanner(rawResponse);
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                if (line.startsWith("Content-Type:") && line.contains("text")) {
-                    isTextFile = true;
-                }
-
-                // header end: check if is text file or is to skip
-                if (line.equals("") || headerRead) {
-                    headerRead = true;
-                    if (!isTextFile) {
-                        break;
-                    } else {
-                        responseBuilder.append(line);
-                    }
-                }
-            }
-            scanner.close();
-
-            String responseBody = responseBuilder.toString();
-            responseBody = responseBody.trim();
-
-            if (responseBody.length() > 0) {
-                page = new Page();
-                page.setWarcID(htmlRecord.getRawRecord().getHeaderMetadataItem("WARC-TREC-ID"));
-                page.setHtml(responseBody);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return page;
     }
 
 }

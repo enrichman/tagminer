@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/TagMiner.iml" filepath="$PROJECT_DIR$/TagMiner.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../search-batch/search-batch.iml" filepath="$PROJECT_DIR$/../search-batch/search-batch.iml" />
     </modules>
   </component>
 </project>

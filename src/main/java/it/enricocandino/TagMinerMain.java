@@ -22,7 +22,7 @@ public class TagMinerMain {
         long start = System.currentTimeMillis();
 
         CsvWriter writer = new CsvWriter("out1", "out2", "out3");
-        ExecutorService pool = Executors.newFixedThreadPool(12);
+        ExecutorService pool = Executors.newFixedThreadPool(20);
         ClueWebReader reader = new ClueWebReader(pool, writer);
 
         // Read the warc files

@@ -1,5 +1,7 @@
 package it.enricocandino;
 
+import clueweb09.WarcHTMLResponseRecord;
+import clueweb09.WarcRecord;
 import it.enricocandino.model.Page;
 import it.enricocandino.model.TaggedSentence;
 import it.enricocandino.tagminer.DefaultMiner;
@@ -13,6 +15,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * @author Enrico Candino
@@ -20,38 +23,93 @@ import java.util.List;
 public class Worker implements Runnable {
 
     private CsvWriter writer;
-    private Page page;
+    private WarcRecord record;
 
-    public Worker(CsvWriter writer, Page page) {
+    public Worker(CsvWriter writer, WarcRecord record) {
         this.writer = writer;
-        this.page = page;
+        this.record = record;
     }
 
     public void run() {
 
-        // parse the page content in the body
-        Document doc = Jsoup.parse(page.getHtml());
-        String bodyText = doc.select("body").text();
+        Page page = buildPageFromWarcRecord(record);
+        if(page != null) {
 
-        // Split the text in sentences
-        List<String> sentences = SentenceSplitter.split(bodyText);
-        if(sentences.isEmpty())
-            return;
+            // parse the page content in the body
+            Document doc = Jsoup.parse(page.getHtml());
+            String bodyText = doc.select("body").text();
 
-        // Remove the "noisy" sentences
-        DefaultSentenceFilter filter = new DefaultSentenceFilter();
-        List<String> cleanedSentences = filter.doFilter(sentences);
-        if(cleanedSentences.isEmpty())
-            return;
+            // Split the text in sentences
+            List<String> sentences = SentenceSplitter.split(bodyText);
+            if (sentences.isEmpty())
+                return;
 
-        // mine the sentences!
-        Miner miner = new DefaultMiner();
-        List<TaggedSentence> taggedSentences = miner.mine(page.getWarcID(), cleanedSentences);
+            // Remove the "noisy" sentences
+            DefaultSentenceFilter filter = new DefaultSentenceFilter();
+            List<String> cleanedSentences = filter.doFilter(sentences);
+            if (cleanedSentences.isEmpty())
+                return;
 
-        // combine tags following the default rules
-        TagCombiner combiner = new DefaultTagCombiner();
-        taggedSentences = combiner.applyRules(taggedSentences);
+            // mine the sentences!
+            Miner miner = new DefaultMiner();
+            List<TaggedSentence> taggedSentences = miner.mine(page.getWarcID(), cleanedSentences);
 
-        writer.write(taggedSentences);
+            // combine tags following the default rules
+            TagCombiner combiner = new DefaultTagCombiner();
+            taggedSentences = combiner.applyRules(taggedSentences);
+
+            writer.write(taggedSentences);
+        }
+    }
+
+    /*
+     * Convert the WarcRecord in a Page
+     */
+    private Page buildPageFromWarcRecord(WarcRecord record) {
+        Page page = null;
+
+        try {
+            WarcHTMLResponseRecord htmlRecord = new WarcHTMLResponseRecord(record);
+
+            String rawResponse = new String(htmlRecord.getRawRecord().getByteContent(), "iso-8859-1");
+
+            boolean isTextFile = false;
+            boolean headerRead = false;
+
+            StringBuilder responseBuilder = new StringBuilder(htmlRecord.getRawRecord().getTotalRecordLength());
+
+            Scanner scanner = new Scanner(rawResponse);
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                if (line.startsWith("Content-Type:") && line.contains("text")) {
+                    isTextFile = true;
+                }
+
+                // header end: check if is text file or is to skip
+                if (line.equals("") || headerRead) {
+                    headerRead = true;
+                    if (!isTextFile) {
+                        break;
+                    } else {
+                        responseBuilder.append(line);
+                    }
+                }
+            }
+            scanner.close();
+
+            String responseBody = responseBuilder.toString();
+            responseBody = responseBody.trim();
+
+            if (responseBody.length() > 0) {
+                page = new Page();
+                page.setWarcID(htmlRecord.getRawRecord().getHeaderMetadataItem("WARC-TREC-ID"));
+                page.setHtml(responseBody);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return page;
     }
 }

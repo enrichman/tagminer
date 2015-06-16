@@ -22,7 +22,6 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
         <module name="batch-extractor" />
-        <module name="search-batch" />
         <module name="TagMiner" />
       </profile>
     </annotationProcessing>
